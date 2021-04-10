@@ -16,6 +16,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{47d0c374-aff8-4ea7-8c54-87bd3d495731}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\shaders">
+      <UniqueIdentifier>{7a356e2f-3a86-44a7-a2ec-61929649456d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\glad.c">
@@ -24,5 +27,18 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\shader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\shader.vs">
+      <Filter>src\shaders</Filter>
+    </None>
+    <None Include="src\shaders\shader.fs">
+      <Filter>src\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
