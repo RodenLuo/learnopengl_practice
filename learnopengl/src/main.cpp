@@ -102,8 +102,12 @@ int main() {
 	glEnableVertexAttribArray(0);
 
 
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	unsigned int fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+	unsigned int shaderProgram = glCreateProgram();
+	unsigned int shaderProgram2 = glCreateProgram();
+
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
@@ -116,8 +120,7 @@ int main() {
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
@@ -127,8 +130,7 @@ int main() {
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-	unsigned int fragmentShader2;
-	fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+	
 	glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
 	glCompileShader(fragmentShader2);
 	glGetShaderiv(fragmentShader2, GL_COMPILE_STATUS, &success);
@@ -138,8 +140,6 @@ int main() {
 		std::cout << "ERROR::SHADER::FRAGMENT2::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
 	
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
@@ -152,8 +152,7 @@ int main() {
 		std::cout << "ERROR::PROGRAM::LINK_FAILED\n" << infoLog << std::endl;
 	}
 
-	unsigned int shaderProgram2;
-	shaderProgram2 = glCreateProgram();
+
 
 	glAttachShader(shaderProgram2, vertexShader);
 	glAttachShader(shaderProgram2, fragmentShader2);
@@ -185,15 +184,22 @@ int main() {
 		glBindVertexArray(VAOs[0]);
 
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glUseProgram(shaderProgram2);
 		glBindVertexArray(VAOs[1]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	// de-allocate all resources 
+	glDeleteVertexArrays(2, VAOs);
+	glDeleteBuffers(2, VBOs);
+	glDeleteBuffers(2, EBOs);
+	glDeleteProgram(shaderProgram);
+	glDeleteProgram(shaderProgram2);
 
 	glfwTerminate();
 
