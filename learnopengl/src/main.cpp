@@ -92,6 +92,12 @@ int main() {
 	
 	glEnable(GL_DEPTH_TEST);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+
+	glEnable(GL_PROGRAM_POINT_SIZE);
+	glPointSize(256.0f);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
@@ -104,8 +110,7 @@ int main() {
 		
 		glBindVertexArray(VAOs[0]);
 
-		glEnable(GL_PROGRAM_POINT_SIZE);
-		glPointSize(32.0f);
+		
 
 		glDrawElements(GL_POINTS, 3, GL_UNSIGNED_INT, 0);
 
