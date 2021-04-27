@@ -7,7 +7,7 @@ uniform float hoffset;
 
 void main()
 {
-    gl_Position = vec4(aPos.x + hoffset, -aPos.y, aPos.z, 1.0);
-    //ourColor = aColor;
-    ourColor = vec3(aPos.x + hoffset, -aPos.y, aPos.z);
+    gl_Position = vec4(aPos.x + hoffset, aPos.y, aPos.z, 1.0);
+    ourColor = aColor;
+    //ourColor = vec3(aPos.x + hoffset, -aPos.y, aPos.z);
 }

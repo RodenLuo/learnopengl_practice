@@ -4,5 +4,8 @@ in vec3 ourColor;
 
 void main()
 {
-    FragColor = vec4(ourColor, 1.0);
+    if (gl_PointCoord.x > 0.5)
+    {
+        FragColor = vec4(ourColor, 1.0);
+    }
 }

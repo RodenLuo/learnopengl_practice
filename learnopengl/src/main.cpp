@@ -33,13 +33,14 @@ int main() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,// top right
-		 0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,// bottom right
-		-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,// bottom left
-		-0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,// top left 
+		-0.5f, -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,// top right
+		 0.5f, -0.5f,  0.0f,   0.0f, 1.0f, 0.0f,// bottom right
+		 0.0f,  0.5f,  0.0f,   0.0f, 0.0f, 1.0f,// bottom left
+		-0.5f,  0.5f,  0.0f,   1.0f, 1.0f, 0.0f,// top left 
 	};
+
 	unsigned int indices[] = {
-		0, 1, 3,
+		0, 1, 2,
 	};
 
 	//float vertices2[] = {
@@ -88,18 +89,25 @@ int main() {
 	ourShader.setFloat("hoffset", 0.0f);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ourShader.use();
 		
 		glBindVertexArray(VAOs[0]);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+
+		glEnable(GL_PROGRAM_POINT_SIZE);
+		glPointSize(32.0f);
+
+		glDrawElements(GL_POINTS, 3, GL_UNSIGNED_INT, 0);
 
 
 		//glBindVertexArray(VAOs[1]);
@@ -118,7 +126,7 @@ int main() {
 
 	int nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+	std::cout << "Maximum nr of vertex attributes supported: " << (unsigned int)nrAttributes << std::endl;
 
 	std::cout << "OK" << std::endl;
 
