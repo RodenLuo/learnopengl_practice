@@ -43,12 +43,12 @@ int main() {
 		0, 1, 2,
 	};
 
-	//float vertices2[] = {
-	//	 0.5f,  0.5f, 0.0f,  // top right
-	//	 0.5f, -0.5f, 0.0f,  // bottom right
-	//	-0.5f, -0.5f, 0.0f,  // bottom left
-	//	-0.5f,  0.5f, 0.0f   // top left 
-	//};
+	float vertices2[] = {
+		 0.5f,  0.5f, 0.0f,  1.0, 0.0, 0.0, // top right
+		 0.5f, -0.5f, 0.0f,  0.0, 1.0, 0.0, // bottom right
+		-0.5f, -0.5f, 0.0f,  1.0, 0.0, 0.0, // bottom left
+		-0.5f,  0.5f, 0.0f,  1.0, 0.0, 0.0, // top left 
+	};
 	unsigned int indices2[] = {
 		1, 2, 3
 	};
@@ -79,8 +79,8 @@ int main() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -89,6 +89,10 @@ int main() {
 	Shader ourShader("src/shaders/shader.vs", "src/shaders/shader.fs");
 	ourShader.use();
 	ourShader.setFloat("hoffset", 0.0f);
+
+	Shader triShader("src/shaders/shader_tri.vs", "src/shaders/shader_tri.fs");
+	triShader.use();
+	triShader.setFloat("hoffset", 0.0f);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
@@ -105,20 +109,18 @@ int main() {
 		processInput(window);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		ourShader.use();
+		/*ourShader.use();
 		
 		glBindVertexArray(VAOs[0]);
+		glDrawElements(GL_POINTS, 3, GL_UNSIGNED_INT, 0);*/
 
-		
-
-		glDrawElements(GL_POINTS, 3, GL_UNSIGNED_INT, 0);
-
-
-		//glBindVertexArray(VAOs[1]);
-		//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		triShader.use();
+		glBindVertexArray(VAOs[1]);
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
