@@ -4,6 +4,9 @@
 #include <iostream>
 #include "shader.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -44,14 +47,16 @@ int main() {
 	};
 
 	float vertices2[] = {
-		 0.5f,  0.5f, 0.0f,  1.0, 0.0, 0.0, // top right
-		 0.5f, -0.5f, 0.0f,  0.0, 1.0, 0.0, // bottom right
-		-0.5f, -0.5f, 0.0f,  1.0, 0.0, 0.0, // bottom left
-		-0.5f,  0.5f, 0.0f,  1.0, 0.0, 0.0, // top left 
+		// positions          // colors           // texture coords
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left 
 	};
 	unsigned int indices2[] = {
-		1, 2, 3
+		0, 1, 2, 0, 2, 3
 	};
+
 
 	unsigned int VAOs[2], VBOs[2], EBOs[2];
 	glGenVertexArrays(2, VAOs);
@@ -81,10 +86,12 @@ int main() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	Shader ourShader("src/shaders/shader.vs", "src/shaders/shader.fs");
 	ourShader.use();
@@ -93,6 +100,64 @@ int main() {
 	Shader triShader("src/shaders/shader_tri.vs", "src/shaders/shader_tri.fs");
 	triShader.use();
 	triShader.setFloat("hoffset", 0.0f);
+
+    //texture
+	
+	unsigned int texture[2];
+	glGenTextures(2, texture);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	
+	// set the texture wrapping/filtering options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	stbi_set_flip_vertically_on_load(true);
+
+	int width, height, nrChannels;
+	unsigned char* texData = stbi_load("res/container.jpg", &width, &height, &nrChannels, 0);
+
+	if (texData) 
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+
+	stbi_image_free(texData);
+
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+	// set the texture wrapping/filtering options
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	texData = stbi_load("res/awesomeface.png", &width, &height, &nrChannels, 0);
+
+	if (texData)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+
+	stbi_image_free(texData);
+
+	triShader.setInt("texture1", 0);
+	triShader.setInt("texture2", 1);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
@@ -118,9 +183,11 @@ int main() {
 		glBindVertexArray(VAOs[0]);
 		glDrawElements(GL_POINTS, 3, GL_UNSIGNED_INT, 0);*/
 
+		glDisable(GL_BLEND);
+
 		triShader.use();
 		glBindVertexArray(VAOs[1]);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

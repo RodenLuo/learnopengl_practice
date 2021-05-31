@@ -32,6 +32,9 @@
     <ClInclude Include="src\shader.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\stb_image.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\shader.vs">
