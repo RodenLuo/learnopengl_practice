@@ -29,11 +29,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\shader.h">
-      <Filter>src</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\stb_image.h">
-      <Filter>src</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
